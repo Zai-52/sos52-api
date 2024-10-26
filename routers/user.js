@@ -83,7 +83,11 @@ router.post("/login", async (req, res) => {
     });
 
     if (user) {
-        if (bcryptjs.compare(password, user.password)) {
+        const isPasswordMatch = await bcryptjs.compare(password, user.password);
+        console.log("enter password : " + password);
+        console.log("user password "+ user.password);
+        console.log(isPasswordMatch);
+        if (isPasswordMatch) {
             const token = jwt.sign(user, process.env.JWT_SECRET);
             return res.json({ token, user });
         }
