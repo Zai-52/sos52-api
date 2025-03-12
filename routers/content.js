@@ -33,6 +33,32 @@ router.get("/posts", async (req, res) => {
     }
 });
 
+router.get("/posts/user/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const data = await prisma.post.findMany({
+            where: { userId: Number(id) },
+            include: {
+                user: {
+                    include: {
+                        followers: true,
+                        following: true,
+                    },
+                },
+                comments: true,
+                likes: true,
+            },
+            orderBy: { id: "desc" },
+            take: 20,
+        });
+
+        res.json(data);
+    } catch (e) {
+        res.status(500).json({ error: e });
+    }
+});
+
 router.get("/posts/:id", async (req, res) => {
     const { id } = req.params;
 
